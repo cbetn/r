@@ -1,0 +1,408 @@
+ex-2
+
+cars
+summary(cars)
+speed=cars$speed
+speed_bar=mean(speed)
+speed_bar
+dist=cars$dist
+dist_bar=mean(dist)
+dist_bar
+s_speed=sd(speed)
+s_speed
+s_dist=sd(dist)
+s_dist
+r=cor(speed,dist)
+r
+#Estimation of Regression Coefficients
+b1=r*(s_dist/s_speed)
+b1
+bo=dist_bar-b1*speed_bar
+bo
+plot(speed, dist, ylab = "Car Stopping Distance (ft)", xlab = "Speed (mp
+h)", main = "Car Speed vs. Stopping Distance") 
+SLR=lm(dist~speed)
+SLR
+abline(SLR,col="red")
+residual=SLR$residuals
+hist(residual)
+plot(SLR$residuals ~ speed)
+abline(0,0)
+summary (SLR)
+anova(SLR)
+Ft=qf(0.95, df1 = 1, df2 = 48)
+Ft
+pv=1-pf(89.567, 1, 48)
+pv
+confint(SLR, level = .95)
+newdata = data.frame(speed = 15)
+newdata 
+conf = predict(SLR, newdata, interval = "confidence")
+conf
+pred = predict(SLR, newdata, interval="predict")
+pred
+
+ex-3
+# Residual analysis and forecast accuracy for given dataset
+install.packages(("UsingR"))
+library(UsingR)
+install.packages(("lmtest"))
+library(lmtest)
+df=diamond
+df
+#Fit Simple Linear Regression
+model=lm(df$price~df$carat,data=df)
+model
+summary(model)
+#Extract model Components
+obs_val=df$price
+obs_val
+plot(df$carat,df$price)
+fitted_val=fitted(model)
+fitted_val
+residual=resid(model)
+residual
+#Residual analysis
+plot(fitted_val,residual,
+xlab = "Fitted Values",
+ylab = "Residual",
+main = "Residual VS Fitted Values")
+abline(h=0,lty=2,col="red")
+#Breush-Pagan Test(homoscedasticity)
+bp_test=bptest(model)
+bp_test
+#Decision
+#p>0.05 homoscedasticity satisfied
+#Normal Q-Q Plot
+qqnorm(residual)
+qqline(residual,col="red")
+#Shapiro-Wilk Normality Test
+shapiro_test=shapiro.test(residual)
+shapiro_test
+#Decision rule
+#p>0.05 residual are approx normal
+#Durbin-Watson Test(Independence of Residual)
+dw_test=dwtest(model)
+dw_test
+#this test values always range btw 0 and 4.
+#values from 2.0 indicates there is no autocorrelation detected in the sample.
+#Values from 0 to less than 2 points to +ve autocorrelation.
+#Values from 2 to 4 indicates -ve autocorrelation.
+#Cook's Distance(Influential Observations)
+plot(cooks.distance(model),
+type="h",
+main="Cook's Distance")
+abline(h=4/length(residual),lty=2,col="red")
+#Each vertical line represents one observation
+#A horizontal ref line is drawn at 4/n
+#points above the line deserve further investigation
+#decision
+#Di<1 not influential
+#Di>1 highly influential
+#Di > 4/n Potentially influential(commonly used rule)
+#Forecasting (Prediction)
+1/2
+https://posit.cloud/content/11591651
+02/03/2026, 22:24
+Reg lab - Posit Cloud
+new_df=data.frame(X=c(0.10,0.12,0.15))
+new_df
+predicted_future=with(new_df,(coef(model)[1]+coef(model)[2]*X))
+predicted_future
+#Forecasting accuracy measures
+#Mean Absolute Error(MAE)
+#A smaller MAE suggest better predictive accuracy
+#lower MAE - better model
+MAE=mean(abs(obs_val-fitted_val))
+MAE
+#Mean Squared Error(MSE)
+MSE=mean((obs_val-fitted_val)^2)
+MSE
+#Root Mean Squared Error(RMSE)
+#RMSE represent the standard deviation of the forecast errors
+#Lower RMSE implies higher forecast reliabilty
+RMSE=sqrt(MSE)
+RMSE
+#Mean Absolute Percentage Error(MAPE)
+MAPE=mean(abs((obs_val-fitted_val)/obs_val))*100
+MAPE
+#R=squared
+R_squared=summary(model)$r.squared
+R_squared
+# Print Accuracy Metrics
+cat("\nForecast Accuracy Measures:\n")
+cat("MAE =", MAE, "\n")
+cat("MSE =", MSE, "\n")
+cat("RMSE =", RMSE, "\n")
+cat("MAPE =", MAPE, "%\n")
+cat("R^2 =", R_squared, "\n")
+# Train-Test Split Accuracy
+df1=as.data.frame(df)
+df1
+set.seed(123)
+train_index=sample(1:nrow(df1),0.8*nrow(df1))
+train_index
+train_data=df1[train_index, ]
+train_data
+test_data=df1[-train_index, ]
+test_data
+model_train=lm(train_data$price~train_data$carat,data=train_data)
+model_train
+test_pred=with(test_data,{coef(model_train)[1]+coef(model_train)[2]*test_data$carat})
+test_pred
+MAE_test=mean(abs(test_data$price - test_pred))
+MAE_test
+RMSE_test=sqrt(mean((test_data$price - test_pred)^2))
+RMSE_test
+MAPE_test=mean(abs((test_data$price - test_pred) / test_data$price)) * 100
+MAPE_test
+cat("\nTest Set Forecast Accuracy:\n")
+cat("MAE =", MAE_test, "\n")
+cat("RMSE =", RMSE_test, "\n")
+cat("MAPE =", MAPE_test, "%\n")
+
+
+ex 3 b
+
+cars
+par(mfrow=c(1,2))
+boxplot(cars$speed,main="Speed",sub=paste("Outlier rows:",boxplot.stats(cars$speed)$out))
+boxplot(cars$dist,main="Distance",sub=paste("Outlier rows:",boxplot.stats(cars$dist)$out))
+cor(cars$speed,cars$dist)
+linear_Model = lm(dist ~ speed,data=cars)
+linear_Model
+model_summary=summary(linear_Model)
+model_summary
+modelCoeffs=model_summary$coefficients
+modelCoeffs
+n=nrow(cars)
+alpha=0.05
+beta.estimate=modelCoeffs["speed","Estimate"]
+beta.estimate
+std.error = modelCoeffs["speed", "Std. Error"]
+std.error
+t_value=beta.estimate/std.error
+t_value
+t_table=qt((alpha/2),n-2,lower.tail = F)
+t_table
+if(t_value>t_table) print("reject the null hypothesis that the co-efficient of the predicator 
+is zero") else print("accept the null hypothesis")
+p_value=2*(1-pt(abs(t_value),df=nrow(cars)-2))
+p_value
+if(p_value<0.05) print("reject the null hypothesis that the co-efficient of the predicator is 
+zero") else print("accept the null hypothesis")
+f=summary(linear_Model)$fstatistic
+f
+f_table=qf(.95,df1=f[2],df2 =f[3])
+f_table
+if(f[1]>f_table) print("reject the null hypothesis that the co-efficient of the predictor is 
+zero") else print("accept the null hypothesis")
+summary(linear_Model)$r.squared
+summary(linear_Model)$adj.r.squared
+confint(linear_Model)
+#exercise
+#marketing
+#summary(marketing)
+
+
+ex 4
+
+mtcars
+head(mtcars)
+names(mtcars)
+model=lm(mpg~cyl+disp+hp+drat+wt+qsec+vs+am+gear+carb,data=mtcars)
+model
+summary(model)
+confint(model, level=.95)
+teststat=coef(summary(model))[3,1]/coef(summary(model))[3,2]
+teststat
+n=nrow(mtcars)
+n
+t_table=qt((alpha/2),n-11,lower.tail = F)
+t_table
+if(teststat>t_table) print("reject the null hypothesis that the co-efficient of the predicator 
+is zero") else print("accept the null hypothesis")
+2*pt(teststat, 21, lower.tail=F)
+if(p_value<0.05) print("reject the null hypothesis that the co-efficient of the predicator is 
+zero") else print("accept the null hypothesis")
+teststat1=coef(summary(model))[1,1]/coef(summary(model))[1,2]
+teststat1
+2*pt(teststat1,21,lower.tail=F)
+residuals=model$residuals
+residuals
+hist(residuals)
+qqnorm(residuals)
+qqline(residuals)
+plot(model$residuals ~ mtcars$disp)
+abline(0,0)
+plot(model)
+model1=lm(mpg~cyl+log(disp)+log(hp)+drat+wt+qsec+vs+am+gear+carb,data=mtcars)
+summary(model1)
+plot(model1)
+library(MASS)
+stepAIC(model)
+stepAIC(model1)
+model2=lm(mpg~qsec+wt+am,data=mtcars)
+summary(model2)
+model3=lm(mpg~log(disp)+gear+carb,data=mtcars)
+summary(model3)
+model4=lm(mpg~qsec+wt*am,data=mtcars)
+summary(model4)
+AIC(model4)
+new_values=data.frame(wt=2.92, qsec=20.1, am=1)
+new_values
+pred_y=predict(model2,new_values,interval="predict")
+https://posit.cloud/content/11591651
+02/03/2026, 22:25
+Reg lab - Posit Cloud
+pred_y
+conf_y=predict(model2,new_values,interval="confidence")
+conf_y
+
+
+
+ex 5
+
+
+
+install.packages("UsingR")
+library(UsingR)
+install.packages("lmtest")
+library(lmtest)
+install.packages("datarium")
+library(datarium)
+marketing
+head(marketing)
+names(marketing)
+model_1=lm(sales~youtube+facebook+newspaper,data=marketing)
+model_1
+summary(model_1)
+# Test for significance of regression using ANOVA
+f=summary(model_1)$fstatistic
+f
+f_table=qf(.95, df1=f[2], df2=f[3])
+f_table
+if(f[1]>f_table)print("reject the null hypothesis that the co-efficient of the predictors is
+zero") else print("accept the null hypothesis")
+# Test of Individual regression coefficient (beta1)
+teststat=abs(coef(summary(model_1))[4,1]/coef(summary(model_1))[4,2])
+teststat
+n=nrow(marketing)
+n
+alpha=0.05
+# p values of coefficients
+Prob_values=coef(summary(model_1))[, "Pr(>|t|)"]
+Prob_values
+p_value=2*pt((teststat),n-4,lower.tail=F)
+p_value
+if(p_value<0.05) print("reject the null hypothesis that the coefficient of the predictor is
+zero")else print("accept the null hypothesis")
+# t-test
+t_table=qt((alpha/2),n-4,lower.tail = F)
+t_table
+if(teststat>t_table) print("reject the null hypothesis that the coefficient of the predictor is 
+zero")else print("accept the null hypothesis")
+# Test for intercept (beta0)
+teststat1=coef(summary(model_1))[1,1]/coef(summary(model_1))[1,2]
+teststat1
+# p values of coefficients
+Prob_values=coef(summary(model_1))[, "Pr(>|t|)"]
+Prob_values
+p_value=2*pt(abs(teststat1),n-4,lower.tail=F)
+p_value
+if(p_value<0.05) print("reject the null hypothesis that the intercept is zero") else 
+print("accept the null hypothesis")
+# t-test
+t_table=qt((alpha/2),n-4,lower.tail = F)
+t_table
+if(teststat1>t_table) print("reject the null hypothesis that the intercept is zero") else 
+print("accept the null hypothesis")
+1/3
+https://posit.cloud/content/11591651
+02/03/2026, 22:26
+Reg lab - Posit Cloud
+# Extract Model Components
+obs_val=marketing$sales
+obs_val
+fitted_val=fitted(model_1)
+fitted_val
+residuals=resid(model_1)
+residuals
+# Residual Analysis
+# Residuals vs Fitted Plot
+plot(fitted_val,residuals,
+xlab = "Fitted Values",
+ylab = "Residuals",
+main = "Residuals vs Fitted Values")
+abline(h=0,lty=2,col="red")
+# Random scatter around zero → model is appropriate
+# Funnel shape → heteroscedasticity
+# Curved pattern → non linearity
+# Breusch-Pagan Test(Homoscedasticity)
+bp_test=bptest(model_1)
+bp_test
+# Decision
+# p > 0.05 → homoscedasticity satisfied
+# Normal Q-Q Plot
+qqnorm(residuals)
+qqline(residuals, col = "red")
+hist(residuals)
+# Shapiro-Wilk Normality Test
+shapiro_test=shapiro.test(residuals)
+shapiro_test
+# Decision rule
+# p>0.05 → residuals are approximately normal
+# Since p-value (3.939e-09) < 0.05, we reject H0
+# Statistical inference may be compromised (p-values, confidence intervals)
+# Durbin-Watson Test(Independence of Residuals)
+dw_test=dwtest(model_1)
+dw_test
+# Conclusion
+# The Durbin-Watson statistic will always have a value ranging between 0 and 4.
+# A value of 2.0 indicates there is no autocorrelation detected in the sample.
+# Values from 0 to less than 2 point to positive autocorrelation.
+# Values from 2 to 4 mean negative autocorrelation.
+# Cook’s Distance (Influential Observations)
+# Influential points can distort regression coefficients
+# They may Inflate or deflate slope estimates
+# Affect hypothesis tests
+# Reduce forecast accuracy
+plot(cooks.distance(model_1),
+type = "h",
+main = "Cook's Distance")
+abline(h = 4/length(residuals), lty = 2, col = "red")
+# In a Cook’s Distance plot:
+# Each vertical line represents one observation
+# A horizontal reference line is drawn at 4 / n
+# Points above the line deserve further investigation
+# Decision
+# Di < 1 Observation is not influential
+# Di ≥ 1 Observation is highly influential
+# Di > 4/n Potentially influential (commonly used rule)
+new_values=data.frame(youtube=122.34,facebook=59.59,newspaper=29.18)
+new_values
+2/3
+https://posit.cloud/content/11591651
+02/03/2026, 22:26
+Reg lab - Posit Cloud
+pred_y=predict(model_1,new_values,interval="predict")
+pred_y
+conf_y=predict(model_1,new_values,interval="confidence")
+conf_y
+# The condition number is the maximum condition index.
+# Multicollinearity is present when the VIF is higher than 5 to 10 or
+# the condition indices are higher than 10 to 30.
+#Check for Multicollinearity in R
+#Using Correlation Matrix
+library("MASS")
+stepAIC(model_1)
+install.packages("corrplot")
+library("corrplot")
+corrplot(cor(marketing),method="number")
+#Using VIFs
+install.packages("olsrr")
+library("olsrr")
+ols_vif_tol(model_1)
+# Using Eigenvalues and Condition Index
+ols_eigen_cindex(model_1)
+pre

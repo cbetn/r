@@ -1,0 +1,376 @@
+fo=open("foo.txt","wb")
+print("Name of the file",fo.name)
+print("closed or not:",fo.closed)
+print("opening mode",fo.mode)
+
+#readind and writing a file
+file=open("sample.txt","w")
+file.write("Hello this is EDA lab")
+file.write("\nPython")
+file.close()
+
+file=open('sample.txt','r')
+print(file.read())
+file.close()
+
+#append mode
+file=open("python.txt",'w')
+file.write("welcome to python")
+file.write("\nhappy new year")
+file.close()
+file=open("python.txt",'a')
+file.write("\nAll the best")
+file.close() # Close the file opened in append mode
+file=open('python.txt','r') # Reopen in read mode
+print(file.read())
+file.close()
+
+
+
+file=open("comma.csv",'w')
+file.write("no,age,salary")
+file.write("\n1,20,4000")
+file.write("\n2,20,5000")
+file.close()
+file=open("comma.csv",'a')
+file.write("\n3,24,6000")
+file.close() # Close the file opened in append mode
+file=open('comma.csv','r') # Reopen in read mode
+print(file.read())
+file.close()
+import pandas as pd
+df=pd.read_csv("comma.csv")
+print(df)
+
+import pandas as pd
+
+data = {'Name': ['Alice', 'Bob', 'Charlie'],
+        'Age': [25, 30, 35],
+        'City': ['New York', 'Los Angeles', 'Chicago']}
+df = pd.DataFrame(data)
+
+df.to_csv('dataframe_operations.csv', index=False)
+
+print("DataFrame created and saved to 'dataframe_operations.csv'")
+
+
+df_read = pd.read_csv('dataframe_operations.csv')
+print("Content of 'dataframe_operations.csv':")
+print(df_read)
+
+new_data = {'Name': ['David', 'Eve'],
+            'Age': [40, 22],
+            'City': ['Houston', 'Miami']}
+df_new = pd.DataFrame(new_data)
+
+df_new.to_csv('dataframe_operations.csv', index=False)
+
+df_overwritten_read = pd.read_csv('dataframe_operations.csv')
+print("File 'dataframe_operations.csv' has been overwritten. Updated content:")
+print(df_overwritten_read)
+
+new_data_to_append = {'Name': ['Frank', 'Grace'],
+                      'Age': [28, 32],
+                      'City': ['Seattle', 'Boston']}
+df_append = pd.DataFrame(new_data_to_append)
+
+df_append.to_csv('dataframe_operations.csv', mode='a', header=False, index=False)
+
+df_final_read = pd.read_csv('dataframe_operations.csv')
+print("Data has been appended to 'dataframe_operations.csv'. Final content:")
+print(df_final_read)
+
+import pandas as pd
+dic={"name":['a','b','c','d'],"age":[21,23,22,25]}
+df=pd.DataFrame(dic)
+df.to_csv("dic.csv")
+print(df)
+
+
+
+import json
+import pandas as pd
+data = {
+    "name": "John Doe",
+    "age": 30,
+    "city": "New York"
+}
+json_data = json.dumps(data)
+print(json_data)
+
+file=open("file.json",'w')
+file.write(json_data)
+file.close()
+
+file=open('file.json','r') # Reopen in read mode
+print(file.read())
+file.close()
+df=pd.DataFrame(data,index=[0])
+df.to_json("file.json")
+print(df)
+
+#read data from JSON file
+with open('file.json', 'r') as json_file:
+    data = json.load(json_file)
+print(data)
+
+
+import requests
+response = requests.get('http://api.open-notify.org/this-api-dosent-exist')
+print(response.status_code)
+response=requests.get('http://api.open-notify.org/astros')
+print(response.status_code)
+print(response.json())
+
+#exploring the file type
+#introduction to api
+
+
+# Load dataset
+df = pd.read_csv("/content/EDA activiy 1 (1) (2).csv")
+
+# 1. Rows and Columns
+print("Rows, Columns:", df.shape)
+
+
+
+# 2. Data types
+print("\nData Types:")
+print(df.dtypes)
+
+# Identify column types
+categorical_cols = df.select_dtypes(include='object').columns
+numerical_cols = df.select_dtypes(include=['int64', 'float64']).columns
+
+print("\nCategorical Columns:", list(categorical_cols))
+print("Numerical Columns:", list(numerical_cols))
+
+
+
+# 3. Duplicate customer IDs
+print("\nDuplicate Customer IDs:", df['customerID'].duplicated().sum())
+
+
+
+# 4. Missing values
+print("\nMissing Values per Column:")
+print(df.isnull().sum())
+
+
+
+# 5. Handle missing values in TotalCharges
+df['TotalCharges'] = pd.to_numeric(df['TotalCharges'], errors='coerce')
+df['TotalCharges'].fillna(df['TotalCharges'].median(), inplace=True)
+
+
+# 6. Check inconsistencies in categorical columns
+print("\nUnique values in gender:", df['gender'].unique())
+print("Unique values in InternetService:", df['InternetService'].unique())
+
+
+
+# 7. Average values
+print("\nAverage Tenure:", df['tenure'].mean())
+print("Average Monthly Charges:", df['MonthlyCharges'].mean())
+print("Average Total Charges:", df['TotalCharges'].mean())
+
+
+# 8. Counts
+print("\nSenior Citizens:", df['SeniorCitizen'].sum())
+print("Customers with Partners:", (df['Partner'] == 'Yes').sum())
+print("Customers with Dependents:", (df['Dependents'] == 'Yes').sum())
+
+
+
+# 9. Percentage of paperless billing
+paperless_pct = (df['PaperlessBilling'] == 'Yes').mean() * 100
+print("\nPaperless Billing Percentage:", paperless_pct)
+
+
+
+# 10. Internet service vs churn
+print("\nInternet Service vs Churn:")
+print(pd.crosstab(df['InternetService'], df['Churn']))
+
+
+# 11. Histograms
+plt.figure()
+df['tenure'].hist()
+plt.title("Tenure Distribution")
+plt.xlabel("Tenure")
+plt.ylabel("Count")
+plt.show()
+
+plt.figure()
+df['MonthlyCharges'].hist()
+plt.title("Monthly Charges Distribution")
+plt.xlabel("Monthly Charges")
+plt.ylabel("Count")
+plt.show()
+
+plt.figure()
+df['TotalCharges'].hist()
+plt.title("Total Charges Distribution")
+plt.xlabel("Total Charges")
+plt.ylabel("Count")
+plt.show()
+
+
+# 12. Churn bar plot
+plt.figure()
+df['Churn'].value_counts().plot(kind='bar')
+plt.title("Churn Count")
+plt.xlabel("Churn")
+plt.ylabel("Count")
+plt.show()
+
+
+
+# Stacked bar plots
+pd.crosstab(df['Contract'], df['Churn']).plot(kind='bar', stacked=True)
+plt.title("Churn by Contract Type")
+plt.xlabel("Contract")
+plt.ylabel("Count")
+plt.show()
+
+pd.crosstab(df['InternetService'], df['Churn']).plot(kind='bar', stacked=True)
+plt.title("Churn by Internet Service")
+plt.xlabel("Internet Service")
+plt.ylabel("Count")
+plt.show()
+
+pd.crosstab(df['PaymentMethod'], df['Churn']).plot(kind='bar', stacked=True)
+plt.title("Churn by Payment Method")
+plt.xlabel("Payment Method")
+plt.ylabel("Count")
+plt.show()
+
+
+import requests
+import json
+url="https://api.github.com/search/repositories?q=language:python&sort=stars"
+headers={"Accept":"application/vnd.github.v3+json"}
+r=requests.get(url,headers=headers)
+print(f"Status code: {r.status_code}")
+response_dict=r.json()
+print(f"Total repositories:{response_dict['total_count']}")
+print(response_dict.keys())
+
+
+import requests
+api_url="https://jsonplaceholder.typicode.com/posts"
+new_post_data={
+    "userId":1,
+    "title":"My new post",
+    "body":"This is the body of my new post"
+}
+response=requests.post(api_url,json=new_post_data)
+print(response.json())
+
+import pandas as pd
+import requests
+
+# Using a public API that provides sample data (JSONPlaceholder posts)
+api_url = "https://jsonplaceholder.typicode.com/posts"
+
+response = requests.get(api_url)
+data_users=response.json()
+df_users=pd.DataFrame(data_users)
+display(df_users.head())
+
+
+import requests
+from bs4 import BeautifulSoup
+res=requests.get("https://www.geeksforgeeks.org/python/python-programming-language-tutorial/")
+soup=BeautifulSoup(res.content,'html.parser')
+print(soup.prettify())
+
+
+import requests
+from bs4 import BeautifulSoup
+res=requests.get("https://www.geeksforgeeks.org/python/python-programming-language-tutorial/")
+soup=BeautifulSoup(res.content,'html.parser')
+
+content=soup.find('div',class_='article--viewer_content')
+if content:
+  for para in content.find_all('p'):
+    print(para.text.strip())
+else:
+  print("No article content found.")
+
+#######################################################################Z score###################################################################
+
+import numpy as np
+import pandas as pd
+from scipy.stats import zscore
+data= {'values': [12, 15, 14, 10, 9, 100, 8, 13, 10, 14, 11, 10]}
+df = pd.DataFrame(data)
+print(df)
+# Calculate Z-score
+df['z_score'] = np.abs(zscore(df['values']))
+# Detect outliers
+outliers = df[df['z_score'] > 3]
+print("Outliers using Z-Score method:\n", outliers)
+
+df_clean_zscore = df[df['z_score'] <= 3]
+print("Data after removing outliers (Z-Score):\n", df_clean_zscore)
+
+
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.ensemble import IsolationForest
+
+# --- BOX PLOT METHOD (IQR) ---
+print("\n--- Box Plot Method ---")
+# 1. Visualize with a Box Plot
+plt.figure(figsize=(6,4))
+sns.boxplot(x=df['values'])
+plt.title("Box Plot of Values")
+plt.show()
+
+# 2. Identify thresholds using IQR
+Q1 = df['values'].quantile(0.25)
+Q3 = df['values'].quantile(0.75)
+IQR = Q3 - Q1
+lower_bound = Q1 - 1.5 * IQR
+upper_bound = Q3 + 1.5 * IQR
+
+# 3. Eliminate outliers
+df_clean_iqr = df[(df['values'] >= lower_bound) & (df['values'] <= upper_bound)]
+print(f"Lower Bound: {lower_bound}, Upper Bound: {upper_bound}")
+print("Data after removing outliers (IQR):\n", df_clean_iqr)
+
+
+# --- SCATTER PLOT METHOD ---
+print("\n--- Scatter Plot Method ---")
+# Adding a second column for plotting
+df['index'] = df.index
+
+# 1. Draw scatter plot
+plt.figure(figsize=(6,4))
+plt.scatter(df['index'], df['values'], color='blue', label='Data Points')
+plt.axhline(y=80, color='red', linestyle='--', label='Visual Threshold') # Visualizing the gap
+plt.title("Scatter Plot to Identify Outliers")
+plt.legend()
+plt.show()
+# 2. Eliminate based on visual range (e.g., values < 80)
+df_clean_scatter = df[df['values'] < 80]
+print("Data after removing outliers (Scatter Plot):\n", df_clean_scatter)
+
+# --- SCIKIT-LEARN: ISOLATION FOREST ---
+print("\n--- Isolation Forest Method ---")
+# Initialize model (contamination is the expected % of outliers)
+iso = IsolationForest(contamination=0.1, random_state=42)
+df['outlier_label'] = iso.fit_predict(df[['values']])
+
+# -1 indicates an outlier, 1 indicates normal data
+outliers_iso = df[df['outlier_label'] == -1]
+df_clean_iso = df[df['outlier_label'] == 1]
+
+print("Outliers detected by Isolation Forest:\n", outliers_iso)
+print("Clean data (Isolation Forest):\n", df_clean_iso)
+
+
+
+

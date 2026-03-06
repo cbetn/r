@@ -372,5 +372,65 @@ print("Outliers detected by Isolation Forest:\n", outliers_iso)
 print("Clean data (Isolation Forest):\n", df_clean_iso)
 
 
+#GRUBBS TEST
+from scipy.stats import t
 
+def grubbs_test(x):
+    N = len(x)
+    mean_x = np.mean(x)
+    std_x = np.std(x)
+
+    G = max(abs(x - mean_x)) / std_x
+
+    t_val = t.ppf(1 - 0.05/(2*N), N-2)
+    threshold = ((N-1)/np.sqrt(N)) * np.sqrt(t_val*2 / (N-2 + t_val*2))
+
+    if G > threshold:
+        print("Outlier Detected")
+    else:
+        print("No Outlier")
+
+grubbs_test(df['A'])
+
+
+#MAHALANOBIS DISTANCE
+def mahalanobis(x, data):
+    cov = np.cov(data.values.T)
+    inv_cov = np.linalg.inv(cov)
+    mean = data.mean().values
+
+    diff = x - mean
+    md = np.sqrt(diff.dot(inv_cov).dot(diff.T))
+    return md
+
+md = df.apply(lambda row: mahalanobis(row.values, df), axis=1)
+
+df_md = df[md < 3]
+print("After Mahalanobis:\n", df_md)
+
+
+
+#ISOLATION FOREST
+iso = IsolationForest(contamination=0.05)
+pred = iso.fit_predict(df)
+
+df_iso = df[pred == 1]
+print("Isolation Forest Result:\n", df_iso)
+
+
+#LOCAL OUTLIER FACTOR
+lof = LocalOutlierFactor(n_neighbors=20)
+pred = lof.fit_predict(df)
+
+df_lof = df[pred == 1]
+print("LOF Result:\n", df_lof)
+
+
+
+#ONE-CLASS SVM
+svm = OneClassSVM(nu=0.05)
+pred = svm.fit_predict(df)
+
+df_svm = df[pred == 1]
+print("One-Class SVM Result:\n", df_svm)
 

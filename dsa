@@ -1,0 +1,861 @@
+# Binary Tree Implementation
+class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+class BinaryTree:
+    def __init__(self):
+        self.root = None
+    def insert_left(self, parent, data):
+        """Insert node as left child of parent"""
+        if parent is None:
+            print("Cannot insert: parent is None")
+            return
+        parent.left = TreeNode(data)
+    def insert_right(self, parent, data):
+        """Insert node as right child of parent"""
+        if parent is None:
+            print("Cannot insert: parent is None")
+            return parent.right = TreeNode(data)
+    def inorder(self, root):
+        """Left-Root-Right traversal"""
+        if root:
+            self.inorder(root.left)
+            print(root.data, end=' ')
+            self.inorder(root.right)
+
+    def preorder(self, root):
+        """Root-Left-Right traversal"""
+        if root:
+            print(root.data, end=' ')
+            self.preorder(root.left)
+            self.preorder(root.right)
+       def postorder(self, root):
+            """Left-Right-Root traversal"""
+            if root:
+                self.postorder(root.left)
+                self.postorder(root.right)
+                print(root.data, end=' ')
+# Test Binary Tree
+if __name__ == "__main__":
+    bt = BinaryTree()
+    bt.root = TreeNode('A')
+# Build tree:     A
+#                / \
+#               B   C
+#              / \   \
+#             D   E   F
+    bt.insert_left(bt.root, 'B')
+    bt.insert_right(bt.root, 'C')
+    bt.insert_left(bt.root.left, 'D')
+    bt.insert_right(bt.root.left, 'E')
+    bt.insert_right(bt.root.right, 'F')
+    
+#Complexity: Insert/traversal: O(n), Space: O(n)
+#Binary Search Tree Implementation (Insert + Basic Traversals)
+
+class TreeNode:
+def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+class BST:
+    def __init__(self):
+        self.root = None
+    def insert(self, data):
+        """Insert maintaining BST property: left < root < right"""
+    if self.root is None:
+        self.root = TreeNode(data)
+    else:
+        self._insert_recursive(self.root, data)
+    def _insert_recursive(self, node, data):
+        if data < node.data:
+            if node.left is None:
+                node.left = TreeNode(data)
+            else:
+                self._insert_recursive(node.left, data)
+        else:
+            if node.right is None:
+                node.right = TreeNode(data)
+            else:
+                self._insert_recursive(node.right, data)
+    def inorder(self, root):
+        """Inorder gives sorted order for BST"""
+        if root:
+            self.inorder(root.left)
+            print(root.data, end=' ')
+            self.inorder(root.right)
+
+    def search(self, data):
+        """Search for data in BST"""
+        return self._search_recursive(self.root, data)
+    def _search_recursive(self, node, data):
+        if node is None or node.data == data:
+            return node is not None
+        if data < node.data:
+            return self._search_recursive(node.left, data)
+        return self._search_recursive(node.right, data)
+# Test BST Insert
+if __name__ == "__main__":
+    bst = BST()
+    values = [50, 30, 70, 20, 40, 60, 80]
+    for val in values:
+        bst.insert(val)
+        print("BST Inorder (sorted): ", end="")
+        bst.inorder(bst.root)
+        print()
+        # Test search
+        print("Search 40:", bst.search(40))
+        print("Search 90:", bst.search(90))
+# Complexity: Insert/search: O(h), Inorder: O(n), Space: O(n)
+# BSTDelete Operation (All Cases)
+# Uses inorder successor for 2-child nodes. Handles leaf, single child, both children.
+class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+class BST:
+    def __init__(self):
+        self.root = None
+    def insert(self, data):
+        if self.root is None:
+            self.root = TreeNode(data)
+        else:
+            self._insert_recursive(self.root, data)
+    def _insert_recursive(self, node, data):
+        if data < node.data:
+            if node.left is None:
+                node.left = TreeNode(data)
+            else:
+                self._insert_recursive(node.left, data)
+        else:
+            if node.right is None:
+                node.right = TreeNode(data)
+            else:
+                self._insert_recursive(node.right, data)
+    def delete(self, data):
+        """Delete node handling 3 cases: leaf, 1-child, 2-children"""
+        self.root = self._delete_recursive(self.root, data)
+    def _delete_recursive(self, node, data):
+        if node is None:
+            return node
+        if data < node.data:
+            node.left = self._delete_recursive(node.left, data)
+        elif data > node.data:
+            node.right = self._delete_recursive(node.right, data)
+        else:
+            # Case 1: Leaf node
+            if node.left is None and node.right is None:
+                return None
+            # Case 2: One child
+            if node.left is None:
+                return node.right
+            if node.right is None:
+                return node.left
+            # Case 3: Two children - get inorder successor (min in right subtree)
+            successor = self._find_min(node.right)
+            node.data = successor.data
+            node.right = self._delete_recursive(node.right, successor.data)
+            return node
+    def _find_min(self, node):
+        """Find minimum value node in subtree"""
+        current = node
+        while current.left:
+            current = current.left
+            return current
+    def inorder(self, root):
+        if root:
+            self.inorder(root.left)
+            print(root.data, end=' ')
+            self.inorder(root.right)
+
+# Test BST Delete (all 3 cases)
+if __name__ == "__main__":
+    bst = BST()
+    values = [50, 30, 70, 20, 40, 60, 80, 25, 35]
+    for val in values:
+        bst.insert(val)
+        print("Original BST: ", end="")
+        bst.inorder(bst.root)
+        print()
+        # Test all delete cases
+        print("Delete 20 (leaf):")
+        bst.delete(20)
+        bst.inorder(bst.root); print()
+        print("Delete 30 (1-child):")
+        bst.delete(30)
+        bst.inorder(bst.root); print()
+        print("Delete 50 (2-children):")
+        bst.delete(50)
+        bst.inorder(bst.root); print()
+        # Complexity: Delete: O(h), successor find: O(h), Space: O(n)
+# 4. Application 1: Expression Tree Evaluation (Binary Tree)
+# Evaluate polish notation tree: operators at internal nodes, operands at leaves.
+class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+class ExpressionTree:
+    def __init__(self):
+        self.root = None
+    def build_from_postfix(self, postfix):
+        """Build expression tree from postfix notation"""
+        stack = []
+        for char in postfix:
+            if char.isalnum():  # Operand
+                stack.append(TreeNode(char))
+            else:  # Operator
+                right = stack.pop()
+                left= stack.pop()
+                node = TreeNode(char)
+                node.left = left
+                node.right = right
+                stack.append(node)
+                self.root = stack.pop()
+    def evaluate(self, root):
+        """Evaluate expression tree using postorder traversal"""
+        if root is None:
+            return 0
+        if root.left is None and root.right is None:  # Operand
+            return int(root.data)
+        left_val = self.evaluate(root.left)
+        right_val = self.evaluate(root.right)
+        if root.data == '+':
+            return left_val + right_val
+        elif root.data == '-':
+            return left_val - right_val
+        elif root.data == '*':
+            return left_val * right_val
+        elif root.data == '/':
+            return left_val // right_val  # Integer division
+        return 0
+
+# Test Expression Tree
+if __name__ == "__main__":
+    et = ExpressionTree()
+    # Postfix: AB+CD-* (A+B)*(C-D)
+    et.build_from_postfix("AB+CD-*")
+    print("Expression: (A+B)*(C-D)")
+    print("Result (A=5,B=3,C=4,D=2):", et.evaluate(et.root))
+    # Verify: (5+3)*(4-2) = 8*2 = 16
+    #Complexity: Build: O(n), Evaluate: O(n) postorder
+# 5. Application 2: BST Dictionary (Search/Insert/Delete + Word Count)
+# Augmented BST tracking frequency of words. Duplicate words increment count.
+class TreeNode:
+    def __init__(self, data):
+        self.data = data
+        self.count = 1  
+        # Word frequency
+        self.left = None
+        self.right = None
+class BSTDictionary:
+    def __init__(self):
+        self.root = None
+    def insert(self, word):
+        """Insert word, increment count if exists"""
+        if self.root is None:
+            self.root = TreeNode(word)
+        else:
+            self._insert_recursive(self.root, word)
+    def _insert_recursive(self, node, word):
+        if word < node.data:
+            if node.left is None:
+                node.left = TreeNode(word)
+            else:
+                self._insert_recursive(node.left, word)
+            elif word > node.data:
+                if node.right is None:
+                    node.right = TreeNode(word)
+                else:
+                    self._insert_recursive(node.right, word)
+            else:  # Word exists, increment count
+                node.count += 1
+    def search(self, word):
+    """Search for word and return count"""
+        node = self._search_recursive(self.root, word)
+            return node.count if node else 0
+    def _search_recursive(self, node, word):
+        if node is None or node.data == word:
+            return node
+        if word < node.data:
+            return self._search_recursive(node.left, word)
+        return self._search_recursive(node.right, word)
+    def delete(self, word):
+        """Delete word (decrement count, remove if count=0)"""
+        self.root = self._delete_recursive(self.root, word)
+    def _delete_recursive(self, node, word):
+        if node is None:
+            return node
+        if word < node.data:
+            node.left = self._delete_recursive(node.left, word)
+        elif word > node.data:
+            node.right = self._delete_recursive(node.right, word)
+        else:
+            if node.count > 1:
+                node.count -= 1  
+            else:
+                # Just decrement count
+                # Remove node (standard BST delete logic)
+                if node.left is None:
+                    return node.right
+                elif node.right is None:
+                    return node.left
+                else:
+                    min_node = self._find_min(node.right)
+                    node.data = min_node.data
+                    node.count = min_node.count
+                    node.right 
+        return node
+    def _find_min(self, node):
+        current = node= self._delete_recursive(node.right, min_node.data)
+        while current.left:
+            current = current.left
+            return current
+    def inorder(self, root):
+        if root:
+            self.inorder(root.left)
+            print(f"{root.data}:{root.count}", end=' ')
+            self.inorder(root.right)
+# Test BST Dictionary
+if __name__ == "__main__":
+    dict_bst = BSTDictionary()
+    words = ["apple", "banana", "apple", "cherry", "banana", "apple"]
+    for word in words:
+        dict_bst.insert(word)
+        print("Dictionary contents: ", end="")
+        dict_bst.inorder(dict_bst.root)
+        print()
+        print("apple count:", dict_bst.search("apple"))
+        print("grape count:", dict_bst.search("grape"))
+        dict_bst.delete("apple")
+        print("After delete apple: ", end="")
+        dict_bst.inorder(dict_bst.root)
+
+
+
+
+
+
+
+#1. Singly Linked List Implementation
+class Node:
+    """Node for Singly Linked List"""
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+class SinglyLinkedList:
+    """Singly Linked List: O(1) head ops, O(n) tail/search"""
+    def __init__(self):
+        self.head = None
+    def insert_front(self, data):  # O(1)
+        """Insert at head"""
+        new_node = Node(data)
+        new_node.next = self.head
+        self.head = new_node
+    def insert_before(self, target_node, data):  # O(n) search
+        """Insert NEW_NODE before target_node. Returns new_node"""
+        if target_node is None:
+            print("Target node cannot be None")
+            return None
+        new_node = Node(data)
+        # Special case: insert before head
+        if target_node == self.head:
+            new_node.next = self.head
+            self.head = new_node
+            return new_node
+        # Traverse to find predecessor
+        curr = self.head
+        while curr and curr.next != target_node:
+            curr = curr.next
+        if curr is None:
+            print("Target node not found in list")
+            return None
+        # Insert before target
+        new_node.next = target_node
+        curr.next = new_node
+        return new_node
+    def insert_end(self, data):  # O(n)
+        new_node = Node(data)
+        if not self.head:
+            self.head = new_node
+        return
+            curr = self.head
+        while curr.next:
+            curr = curr.next
+            curr.next = new_node
+    def delete_front(self):  # O(1)
+        if self.head:
+            self.head = self.head.next
+    def size(self):  # O(n)
+        count = 0
+        curr = self.head
+    while curr:
+            count += 1
+            curr = curr.next
+            return count
+
+    def print_list(self):
+        if not self.head:
+            print("Empty")
+            return curr = self.head
+        vals = []
+        while curr:
+            vals.append(str(curr.data))
+            curr = curr.next
+            print("-> ".join(vals) + "-> None")
+if __name__ == "__main__":
+    sll = SinglyLinkedList()
+    # Build 0->1->2->3
+    for i in range(4):
+        sll.insert_end(i)
+        print("Original:"); sll.print_list()
+        # Insert 10 before node 2
+        node2 = sll.head.next.next  # Node with data=2
+        new_node = sll.insert_before(node2, 10)
+        print("After insert_before(node2, 10):"); sll.print_list()
+        print(f"Inserted node data: {new_node.data}")
+#Complexity: Insert front/delete front: O(1), Insert end/traverse: O(n), Space: O(n)
+#2. Doubly Linked List Implementation
+class Node:
+    """Node for Doubly Linked List"""
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+        self.prev = None
+class DoublyLinkedList:
+    """Doubly Linked List: O(1) insert_before with prev pointer"""
+    def __init__(self):
+        self.head = None
+        self.tail = None
+    def insert_end(self, data):  # O(1)
+        new_node = Node(data)
+        if not self.head:
+            self.head = self.tail = new_node
+            return new_node
+        new_node.prev = self.tail
+        self.tail.next = new_node
+        self.tail = new_node
+        return new_node
+    def insert_before(self, target_node, data):  # O(1) with pointer!
+        """Insert before target_node using prev/next. Returns new_node"""
+        if target_node is None:
+            print("Target node cannot be None")
+            return None
+        new_node = Node(data)
+        # Case 1: Insert before head
+        if target_node == self.head:
+            new_node.next = self.head
+            self.head.prev = new_node
+            self.head = new_node
+        if not self.tail:  # Was empty
+            self.tail = new_node
+            return new_node
+        # Case 2: Insert in middle/end
+        new_node.next = target_node
+        new_node.prev = target_node.prev
+        target_node.prev.next = new_node
+        target_node.prev = new_node
+        return new_node
+    def delete_node(self, key):  # O(n)
+        curr = self.head
+        while curr:
+            if curr.data == key:
+                if curr.prev:
+                    curr.prev.next = curr.next
+                else:
+                    self.head= curr.next 
+                    if curr.next:
+                    curr.next.prev = curr.prev
+                else:
+                    self.tail 
+                return True
+            curr = curr.next
+          return False
+    def size(self):  # O(n)
+        count = 0
+        curr = self.head
+        while curr:
+            count += 1
+            curr = curr.next
+            return count = curr.prev
+    def print_forward(self):
+        curr = self.head
+        vals = []
+        while curr:
+            vals.append(str(curr.data))
+            curr = curr.next
+            print(" <-> ".join(vals) + " <-> None")
+if __name__ == "__main__":
+    dll = DoublyLinkedList()
+    # Build 0<->1<->2<->3
+    nodes = []
+    for i in range(4):
+        nodes.append(dll.insert_end(i))
+        print("Original:"); dll.print_forward()
+        # Insert 10 before node 2
+        node2 = nodes[2]
+        new_node = dll.insert_before(node2, 10)
+        print("After insert_before(node2, 10):"); dll.print_forward()
+        print(f"Inserted node data: {new_node.data}, prev={new_node.prev.data if new_node
+#Complexity: Insert/delete with pointer: O(1), Traverse/search: O(n), Space: O(n)
+#3. Circular Linked List Implementation
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+class CircularLinkedList:
+    def __init__(self):
+        self.tail = None
+    def insert_end(self, data):  # O(1)
+        new_node = Node(data)
+        if not self.tail:
+            self.tail = new_node
+            new_node.next = new_node
+        else:
+            new_node.next = self.tail.next
+            self.tail.next = new_node
+            self.tail = new_node
+        return new_node
+    def insert_before(self, target_node, data):  # O(n) or O(1) with tail
+        """Insert before target_node in circular list"""
+        if target_node is None or not self.tail:
+            print("Empty list or invalid target")
+            return None
+        new_node = Node(data)
+        # Special case: before tail (becomes new tail)
+        if target_node == self.tail:
+            new_node.next = self.tail.next
+            self.tail.next = new_node
+            self.tail = new_node
+        return new_node
+        # Traverse to predecessor (could cache prev for O(1))
+        curr = self.tail
+        while curr.next != target_node:
+            curr = curr.next
+            if curr == self.tail:  # Full circle, not found
+                print("Target not found")
+                return None
+            new_node.next = target_node
+            curr.next = new_node
+            return new_node
+    def delete_head(self):  # O(1)
+        if self.tail:
+            if self.tail.next == self.tail:
+                self.tail = None
+           else:
+                self.tail.next = self.tail.next.next
+    def print_list(self):
+        if not self.tail:
+            print("Empty")
+            return curr = self.tail.next
+        vals = []
+        while True:
+            vals.append(str(curr.data))
+            curr = curr.next
+            if curr == self.tail.next:
+                break
+            print(" <-> ".join(vals) + " (circular)")
+if __name__ == "__main__":
+    cll = CircularLinkedList()
+    for i in range(4):
+        cll.insert_end(i)
+    print("Original:"); cll.print_list()
+    # Insert before node 2 (need reference - in practice traverse by value)
+    print("insert_before demo requires node reference")
+#Complexity: Insert/delete/traverse: O(1) amortized, Space: O(n)
+#4. Application 1: Graph DFS Traversal (Singly Linked List as Stack)
+# Uses SLL for explicit stack in iterative DFS. 0=free, 1=wall. Returns path.
+from singly_linked_list import SinglyLinkedList, Node  # Reuse SLL as stack
+class Graph:
+    def __init__(self, n):
+        self.n = n
+        self.adj = [[] for _ in range(n)]
+    def add_edge(self, u, v):
+        self.adj[u].append(v)
+        self.adj[v].append(u)  # Undirected
+    def dfs_iterative(graph: Graph, start):
+        """Iterative DFS using SLL as explicit stack O(V+E)"""
+        visited = [False] * graph.n
+        stack = SinglyLinkedList()
+        stack.insert_end(start)
+        path = []
+        while stack.head:  # Stack not empty
+            node = stack.head.data
+            stack.delete_front()
+            if not visited[node]:
+                visited[node] = True
+                path.append(node)
+                # Push unvisited neighbors (reverse order for sim)
+                for nei in reversed(graph.adj[node]):
+                    if not visited[nei]:
+                        stack.insert_front(nei)
+                        return path
+if __name__ == "__main__":
+    g = Graph(5)
+    g.add_edge(0,1); g.add_edge(0,2); g.add_edge(1,3); g.add_edge(2,4)
+    path = dfs_iterative(g, 0)
+    print("DFS path:", path)  # e.g. [0,2,4,1,3]
+Complexity: O(V +E) time/space
+# 5. Application 2: Polynomial Addition (Doubly Linked List)
+# Traverse sorted degrees, add coefficients.
+
+from doubly_linked_list import DoublyLinkedList
+class PolyNode(Node):  # Extend for degree
+    def __init__(self, coeff, degree):
+    super().__init__(coeff)
+    self.degree = degree
+    def poly_from_terms(terms):  # terms: list(coeff,degree)
+        """Build sorted DLL by degree desc"""
+        dll = DoublyLinkedList()
+        for coeff, deg in sorted(terms, key=lambda x: -x[1]):
+            dll.insert_end((coeff, deg))
+            return dll
+    def add_polys(p1, p2):
+         """Add two polys O(n+m) merge"""
+         result = DoublyLinkedList()
+         # Traverse both (assume sorted desc degree)
+        print("Poly add demo- implement merge like merge sorted lists")
+        return result
+if __name__ == "__main__":
+    p1_terms = [(2,3), (5,1), (1,0)]  # 2x^3 + 5x + 1
+    p1 = poly_from_terms(p1_terms)
+    print("Polynomial 1 built")
+# Complexity: O(n + m) single pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+#1. Basic Static Array Implementation
+class StaticArray:
+    """Fixed-size array implementation"""
+    def __init__(self, capacity):
+        self.capacity = capacity
+        self.size = 0
+        self.array = [None] * capacity
+    def __len__(self):
+        return self.size
+    def append(self, value):
+        if self.size < self.capacity:
+            self.array[self.size] = value
+            self.size += 1
+        else:
+            raise IndexError("StaticArray is full")
+    def insert(self, index, value):
+        """Insert value at index, O(n) time"""
+        if index < 0 or index > self.size:
+            raise IndexError("Index out of bounds")
+        if self.size == self.capacity:
+            raise IndexError("StaticArray is full")
+            # Shift elements right from index
+            for i in range(self.size, index, -1):
+                self.array[i] = self.array[i-1]
+                self.array[index] = value
+                self.size += 1
+    def get(self, index):
+        if 0 <= index < self.size:
+            return self.array[index]
+        raise IndexError("Index out of bounds")
+    def __str__(self):
+        return str(self.array[:self.size])
+    # Test static array
+if __name__ == "__main__":
+    arr = StaticArray(5)
+    for i in range(6):
+        try:
+            arr.append(i)
+            print(f"Appended {i}, size={len(arr)}")
+        except IndexError as e:
+            print(f"Error: {e}")
+#Complexity: Insert: O(1) amortized until full, Access: O(1), Space: O(n)
+#2. Dynamic Array with Resizing
+import time
+class DynamicArray:
+    """Dynamic array with automatic resizing"""
+    def __init__(self, initial_capacity=4):
+        self.capacity = initial_capacity
+        self.size = 0
+        self.array = [None] * self.capacity
+        print(f"Initialized with capacity: {self.capacity}")
+    def __len__(self):
+        return self.size
+    def _resize(self, new_capacity):
+        """Resize array to new capacity"""
+        old_array = self.array
+        self.array = [None] * new_capacity
+        self.capacity = new_capacity
+        # Copy existing elements
+        for i in range(self.size):
+            self.array[i] = old_array[i]
+            print(f"Resized from {len(old_array)} to {new_capacity}")
+    def append(self, value):
+        """Append with amortized O(1) time"""
+        if self.size == self.capacity:
+            self._resize(self.capacity * 2)  # Double capacity
+            self.array[self.size] = value
+            self.size += 1
+    def insert(self, index, value):
+        """Insert at index: O(n) worst case"""
+        if index < 0 or index > self.size:
+            raise IndexError("Index out of bounds")
+        if self.size == self.capacity:
+            self._resize(self.capacity * 2)
+            # Shift elements right
+            for i in range(self.size, index, -1):
+                self.array[i] = self.array[i-1]
+                self.array[index] = value
+                self.size += 1
+    def pop(self):
+        if self.size == 0:
+            raise IndexError("Array is empty")
+            value = self.array[self.size - 1]
+           self.array[self.size - 1] = None
+           self.size -= 1
+          # Shrink if too empty (optional optimization)
+        if self.size <= self.capacity // 4 and self.capacity > 4:
+            self._resize(self.capacity // 2)
+            return value
+    def get(self, index):
+         """O(1) access"""
+        if 0 <= index < self.size:
+            return self.array[index]
+        raise IndexError("Index out of bounds")
+    def __str__(self):
+        return str(self.array[:self.size])
+    if __name__ == "__main__":
+        arr = DynamicArray()
+        print("Testing append:")
+        for i in range(12):
+            arr.append(i)
+            print("\nTesting insert:")
+            arr.insert(2, 99)
+            print(arr)
+            print("\nTesting pop:")
+            arr.pop()
+            print(arr)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#Stack Implementation using Array
+class Stack:
+    """Array-based Stack: LIFO with fixed capacity. O(1) operations."""
+    def __init__(self, capacity):
+        """Time: O(1), Space: O(n)"""
+        self.capacity = capacity
+        self.stack = [None] * capacity
+        self.top = -1
+    def push(self, item):
+        """Push to top. Time: O(1)"""
+        if self.top == self.capacity - 1:
+             print("Stack Overflow!")
+             return False
+        self.top += 1
+        self.stack[self.top] = item
+        return True
+    def pop(self):
+        """Pop from top. Time: O(1)"""
+        if self.top == -1:
+            print("Stack Underflow!")
+            return None
+        item = self.stack[self.top]
+        self.top -= 1
+        return item
+    def peek(self):
+        """Top element. Time: O(1)"""
+        if self.top == -1:
+            return None
+        return self.stack[self.top]
+    def is_empty(self):
+        """Time: O(1)"""
+        return self.top == -1
+    def size(self):
+        """Time: O(1)"""
+        return self.top + 1
+    if __name__ == "__main__":
+        sizes = [10, 100, 1000, 10000]
+        for n in sizes:
+            print(f"\n--- Testing Stack capacity {n}---")
+            s= Stack(n)
+            for i in range(n):
+                s.push(i)
+                print(f"Size after {n} pushes: {s.size()}")
+            for i in range(n//2):
+                s.pop()
+                print(f"Size after {n//2} pops: {s.size()}")
+# Complexity: Push/Pop/Peek/Size/isEmpty: O(1), Space: O(n)
+#2. Circular Queue Implementation using Array
+class Queue:
+    """Circular Array Queue: FIFO. O(1) operations using modulo."""
+    def __init__(self, capacity):
+        """Time: O(1), Space: O(n)"""
+        self.capacity = capacity
+        self.queue = [None] * capacity
+        self.front = self.rear = -1
+    def enqueue(self, item):
+        """Add to rear. Time: O(1)"""
+        if (self.rear + 1) % self.capacity == self.front:
+            print("Queue Overflow!")
+            return False
+        if self.front == -1:
+            self.front = 0
+            self.rear = (self.rear + 1) % self.capacity
+            self.queue[self.rear] = item
+            return True
+    def dequeue(self):
+        """Remove from front. Time: O(1)"""
+        if self.front == -1:
+            print("Queue Underflow!")
+            return None
+        item = self.queue[self.front]
+        if self.front == self.rear:
+            self.front = self.rear = -1
+        else:
+            self.front = (self.front + 1) % self.capacity
+            return item
+    def is_empty(self):
+        """Time: O(1)"""
+        return self.front == -1
+    def size(self):
+        """Time: O(1)"""
+    if self.front == -1:
+        return 0
+    return (self.rear - self.front + self.capacity) % self.capacity + 1
+if __name__ == "__main__":
+    sizes = [10, 100, 1000, 10000]
+    for n in sizes:
+        print(f"\n--- Testing Queue capacity {n}---")
+        q = Queue(n)
+        for i in range(n):
+            q.enqueue(i)
+            print(f"Size after {n} enqueues: {q.size()}")
+        for i in range(n//2):
+            q.dequeue()
+            print(f"Size after {n//2} dequeues: {q.size()}")
+                         Complexity: Enqueue/Dequeue/Peek/Size: O(1), Space: O(n
